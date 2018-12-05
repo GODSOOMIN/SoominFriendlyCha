@@ -12,6 +12,14 @@ import android.widget.TextView;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
+import org.jsoup.Jsoup;
+import org.jsoup.select.*;
+import org.jsoup.Connection.*;
+import org.jsoup.Jsoup;
+import org.jsoup.select.*;
+import org.jsoup.parser.*;
+import org.jsoup.nodes.Document;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -33,6 +41,8 @@ public class Board10sActivity extends AppCompatActivity {
 
 
 
+
+    String keyword10;
 
     boolean inItem = false, inTitle = false, inDescription = false, inDate = false, inLink = false;
     String title=null, description=null, date=null, link=null;
@@ -57,8 +67,22 @@ public class Board10sActivity extends AppCompatActivity {
     public void getNews(){
         new Thread(){
             public void run(){
-                try{
-                    String searchWord = URLEncoder.encode("안마의자", "UTF-8");
+                    try{
+                        Document document = Jsoup.connect("https://datalab.naver.com/keyword/realtimeList.naver").get();
+
+                        Elements elements = document.select("span.class");
+                        int i;
+                    ArrayList<String> keyword = new ArrayList<String>();
+                    for(i = 20; i<40; i++) {
+                        keyword.add(elements.get(i).text());
+                    }
+
+                    int ran = (int)(Math.random()*20);
+
+                    keyword10 = keyword.get(ran);
+
+
+                    String searchWord = URLEncoder.encode(keyword10, "UTF-8");
                     String apiURL = "https://openapi.naver.com/v1/search/news.xml?query="+searchWord+"&display=3&start=1&sort=sim";
                     URL url = new URL(apiURL);
                     HttpURLConnection con = (HttpURLConnection) url.openConnection();
